@@ -3,12 +3,11 @@ package main
 import (
 	"fmt"
 	"log"
+	//"log"
+	"lemin/data"
+	"lemin/utils"
 	"os"
 	"strings"
-
-
-	"lemin/utils"
-	"lemin/data"
 )
 
 func main() {
@@ -31,36 +30,65 @@ func main() {
 	utils.CheckError(err)
 
 	fileData := strings.Split(string(file), "\n")
-	if len(fileData) == 0 || fileData[0] != "##start" {
-		log.Fatal("ERROR: invalid data format, no start room found")
+	ants := fileData[0]
+	if len(ants) == 1 {
+		fileData = fileData[1:]
+	} else {
+		log.Fatalf("ERROR: invalid data format")
 	}
 
-	var rooms []string
-	var tunnels []string
-	start := 0
+	// if len(fileData) == 0 || fileData[0] != "##start" {
+	// 	log.Fatal("ERROR: invalid data format, no start room found")
+	// }
+
+	var (
+		start int
+		end int
+		initial int
+		count int
+		rooms []string
+		tunnels []string
+	)
 
 	// Parse rooms and find the start and end positions
-	for i := 1; i < len(fileData); i++ {
+	for i := 0; i < len(fileData); i++ {
 		line := fileData[i]
 		if line == "" {
 			continue
 		}
+
+		if string(line[0]) != "#" {
+			count++
+		} 
+
+		if line == "##start" {
+			start = count 
+		}
+		
 		if line[0] == '#' && line != "##end" {
 			continue
 		}
+
 		if line == "##end" {
-			if i+1 < len(fileData) {
-				start = i + 2
-				rooms = append(rooms, string(fileData[i+1][0])) // Add the end room
+			end = count 
+			for i < len(fileData) {
+				if strings.Contains(string(fileData[i]), "-") {
+					initial = i
+					break
+				}
+				if string(fileData[i][0]) != "#" {
+					rooms = append(rooms, string(fileData[i][0]))
+				}
+				i++
 			}
 			break
 		}
 		rooms = append(rooms, string(line[0])) // Add the room name
 	}
 
-	fmt.Println(rooms)
+	fmt.Println("the number of rooms ", rooms)
 	// Parse tunnels starting from the "start" index
-	for i := start; i < len(fileData); i++ {
+	for i := initial; i < len(fileData); i++ {
 		line := fileData[i]
 		if line == "" || line[0] == '#' {
 			continue
@@ -69,14 +97,13 @@ func main() {
 	}
 
 	graph := data.NewGraph()
-
+	fmt.Println("the tunnels are this ", tunnels)
 	for _, connection := range tunnels {
-		rooms := strings.Split(connection, "-")
-		graph.AddEdges(rooms[0], rooms[1])
+		if strings.Contains(connection, "-") {
+			rooms := strings.Split(connection, "-")
+			graph.AddEdges(rooms[0], rooms[1])
+		}
 	}
-
-	paths := graph.BFS("1", "0")
-
+	paths := graph.BFS(rooms[start],rooms[end])
 	fmt.Println(paths)
-
 }
