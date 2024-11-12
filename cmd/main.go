@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	//"log"
 	"lemin/data"
 	"lemin/utils"
 	"os"
@@ -30,6 +29,7 @@ func main() {
 	utils.CheckError(err)
 
 	fileData := strings.Split(string(file), "\n")
+	//check if the number of ants is provided
 	ants := fileData[0]
 	if len(ants) == 1 {
 		fileData = fileData[1:]
@@ -37,9 +37,25 @@ func main() {
 		log.Fatalf("ERROR: invalid data format")
 	}
 
-	// if len(fileData) == 0 || fileData[0] != "##start" {
-	// 	log.Fatal("ERROR: invalid data format, no start room found")
-	// }
+	//check if the progam has start or end
+	var first, last bool 
+
+	for i:=0 ; i < len(fileData); i++ {
+		if string(fileData[i]) == "##start" {
+			first = true
+		}
+
+		if string(fileData[i]) == "##end" {
+			last = true
+			if first {
+				break// if both are true
+			}
+		}
+	}
+
+	if !first || !last {
+		log.Fatalf("Error: invalid data format")
+	}
 
 	var (
 		start int
@@ -51,16 +67,12 @@ func main() {
 	)
 
 	// Parse rooms and find the start and end positions
+	loop:
 	for i := 0; i < len(fileData); i++ {
 		line := fileData[i]
 		if line == "" {
 			continue
 		}
-
-		if string(line[0]) != "#" {
-			count++
-		} 
-
 		if line == "##start" {
 			start = count 
 		}
@@ -74,19 +86,18 @@ func main() {
 			for i < len(fileData) {
 				if strings.Contains(string(fileData[i]), "-") {
 					initial = i
-					break
+					break loop
 				}
 				if string(fileData[i][0]) != "#" {
 					rooms = append(rooms, string(fileData[i][0]))
 				}
 				i++
 			}
-			break
 		}
 		rooms = append(rooms, string(line[0])) // Add the room name
+		count++
 	}
 
-	fmt.Println("the number of rooms ", rooms)
 	// Parse tunnels starting from the "start" index
 	for i := initial; i < len(fileData); i++ {
 		line := fileData[i]
@@ -97,7 +108,6 @@ func main() {
 	}
 
 	graph := data.NewGraph()
-	fmt.Println("the tunnels are this ", tunnels)
 	for _, connection := range tunnels {
 		if strings.Contains(connection, "-") {
 			rooms := strings.Split(connection, "-")
