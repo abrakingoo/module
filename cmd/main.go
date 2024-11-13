@@ -31,7 +31,7 @@ func main() {
 	fileData := strings.Split(string(file), "\n")
 	//check if the number of ants is provided
 	ants := fileData[0]
-	if len(ants) == 1 {
+	if len(ants) == 1 && len(fileData[1]) != 1 {
 		fileData = fileData[1:]
 	} else {
 		log.Fatalf("ERROR: invalid data format")
@@ -114,6 +114,7 @@ func main() {
 			graph.AddEdges(rooms[0], rooms[1])
 		}
 	}
+	fmt.Println("this is the graph ", graph)
 	paths := graph.BFS(rooms[start],rooms[end])
 	fmt.Println(paths)
 }
