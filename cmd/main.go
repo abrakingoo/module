@@ -7,7 +7,19 @@ import (
 	"lemin/utils"
 	"os"
 	"strings"
+	"strconv"
 )
+
+type ant struct {
+	index int
+	target int
+	targetIndex int
+	iteration int
+}
+
+func newAnt() *ant {
+	return &ant{}
+}
 
 func main() {
 	// Check if a file name was provided as an argument
@@ -31,12 +43,15 @@ func main() {
 	fileData := strings.Split(string(file), "\n")
 	//check if the number of ants is provided
 	ants := fileData[0]
-	if len(ants) == 1 && len(fileData[1]) != 1 {
-		fileData = fileData[1:]
-	} else {
-		log.Fatalf("ERROR: invalid data format")
+	// if len(ants) == 1 && len(fileData[1]) != 1 {
+	// 	fileData = fileData[1:]
+	// } else {
+	// 	log.Fatalf("ERROR: invalid data format")
+	// }
+	antNum, err := strconv.Atoi(ants)
+	if err != nil {
+		log.Fatal("ERROR: invalid ant number format")
 	}
-
 	//check if the progam has start or end
 	var first, last bool 
 
@@ -114,7 +129,92 @@ func main() {
 			graph.AddEdges(rooms[0], rooms[1])
 		}
 	}
-	fmt.Println("this is the graph ", graph)
 	paths := graph.BFS(rooms[start],rooms[end])
-	fmt.Println(paths)
+	
+	for i:= 0 ; i< len(paths);i++ {
+		paths[i] = paths[i][1:]
+	}
+	
+	copy_path := make([][]string , len(paths))
+	_= copy(copy_path,paths)
+
+
+	track := antNum
+	for antNum > 0 {
+		min := len(copy_path[0])
+		index := 0
+		for i:= 1; i < len(copy_path); i++ {
+			if len(copy_path[i]) < min {
+				index = i
+			}
+		}
+		copy_path[index] = append(copy_path[index], "ant")
+		antNum--
+	}
+
+	var usedPaths [][]string 
+
+	//useable paths for the ants
+	for i:= 0; i < len(copy_path) ;i++ {
+		if copy_path[i][len(copy_path[i])-1] == "ant" {
+			usedPaths = append(usedPaths, copy_path[i])
+		}
+	}
+
+
+
+	antmove := make([]*ant, antNum)
+
+	for i:= 0; i < track; i++ {
+		a := newAnt()
+		a.index = i + 1
+		antmove = append(antmove, a)
+	}
+
+	var iteration = 0
+	var max = 0
+	for i:= 0; i < len(usedPaths);i++ {
+		if len(usedPaths[i]) > max {
+			max = len(usedPaths[i])
+		}
+	}
+
+	iteration = max - 1
+
+	
+	for i:= 0; i < len(usedPaths); i++ {
+		for j:= 0; j < len(usedPaths[i]); j++ {
+			if usedPaths[i][j] == "ant" {
+				usedPaths[i] = usedPaths[i][:j]
+				break
+			}
+		}
+	} 
+
+
+	var index = 0
+	for i:= 0;  i < iteration; i++ {
+		for j := 0; j < len(usedPaths); j++ {
+			if index >= len(antmove) {
+				break
+			}
+			antmove[index].target = j
+			antmove[index].iteration = i
+			antmove[index].targetIndex = 0
+			index++
+		}
+	}
+
+
+	for i:= 0; i < iteration; i++ {
+		for j:= 0;  j < len(antmove); j++ {
+			if antmove[j].iteration == i  && antmove[j].targetIndex < len(usedPaths[antmove[j].target])  {
+				fmt.Printf("L%d-%s ", antmove[j].index, usedPaths[antmove[j].target][antmove[j].targetIndex])
+				antmove[j].iteration += 1
+				antmove[j].targetIndex += 1
+			}
+		}
+		fmt.Println()
+	}
+
 }
