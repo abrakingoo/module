@@ -181,6 +181,8 @@ func main() {
 
 	iteration = max - 1
 
+	trackRoom := make(map[int]int)
+
 	
 	for i:= 0; i < len(usedPaths); i++ {
 		for j:= 0; j < len(usedPaths[i]); j++ {
@@ -191,6 +193,11 @@ func main() {
 		}
 	} 
 
+	for i:= 0; i < len(usedPaths); i++ {
+		trackRoom[i] = (iteration + 1) - len(usedPaths[i])
+	}
+
+
 
 	var index = 0
 	for i:= 0;  i < iteration; i++ {
@@ -198,9 +205,13 @@ func main() {
 			if index >= len(antmove) {
 				break
 			}
+			if trackRoom[j] == 0 {
+				continue
+			}
 			antmove[index].target = j
 			antmove[index].iteration = i
 			antmove[index].targetIndex = 0
+			trackRoom[j]--
 			index++
 		}
 	}
