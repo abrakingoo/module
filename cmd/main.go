@@ -30,6 +30,7 @@ func main() {
 
 	fileName := os.Args[1]
 
+
 	// Check if the file has a .txt extension
 	if !strings.HasSuffix(fileName, ".txt") {
 		fmt.Println("ERROR: invalid file format, only (.txt) files are supported.")
@@ -44,7 +45,7 @@ func main() {
 	//check if the number of ants is provided
 	ants := fileData[0]
 	// if len(ants) == 1 && len(fileData[1]) != 1 {
-	// 	fileData = fileData[1:]
+	fileData = fileData[1:]
 	// } else {
 	// 	log.Fatalf("ERROR: invalid data format")
 	// }
@@ -104,12 +105,14 @@ func main() {
 					break loop
 				}
 				if string(fileData[i][0]) != "#" {
-					rooms = append(rooms, string(fileData[i][0]))
+					r := strings.Split(fileData[i], " ")
+					rooms = append(rooms, r[0])
 				}
 				i++
 			}
 		}
-		rooms = append(rooms, string(line[0])) // Add the room name
+		r := strings.Split(line, " ")
+		rooms = append(rooms, r[0]) // Add the room name
 		count++
 	}
 
@@ -121,7 +124,6 @@ func main() {
 		}
 		tunnels = append(tunnels, line)
 	}
-
 	graph := data.NewGraph()
 	for _, connection := range tunnels {
 		if strings.Contains(connection, "-") {
@@ -129,6 +131,7 @@ func main() {
 			graph.AddEdges(rooms[0], rooms[1])
 		}
 	}
+	
 	paths := graph.BFS(rooms[start],rooms[end])
 	
 	for i:= 0 ; i< len(paths);i++ {
