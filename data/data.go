@@ -46,23 +46,8 @@ func (g *Graph) BFS(start, end string) [][]string {
 	return findMaxCompatiblePaths(allPaths)
 }
 
-// Simple helper to check if a path is compatible with a set of paths
-func isCompatibleWithAll(path []string, pathSet [][]string) bool {
-    // For each path in our current set
-    for _, existingPath := range pathSet {
-        // Check middle nodes (exclude start/end)
-        for i := 1; i < len(path)-1; i++ {
-            for j := 1; j < len(existingPath)-1; j++ {
-                if path[i] == existingPath[j] {
-                    return false
-                }
-            }
-        }
-    }
-    return true
-}
 
-// Simplified version to find maximum compatible paths
+
 func findMaxCompatiblePaths(paths [][]string) [][]string {
     maxSet := [][]string{}
     
@@ -70,19 +55,16 @@ func findMaxCompatiblePaths(paths [][]string) [][]string {
     for i := 0; i < len(paths); i++ {
         currentSet := [][]string{paths[i]}
         
-        // Try to add each remaining path
         for j := 0; j < len(paths); j++ {
             if i == j {
                 continue
             }
             
-            // If this path is compatible with all current paths, add it
-            if isCompatibleWithAll(paths[j], currentSet) {
+            if utils.IsUnique(paths[j], currentSet) {
                 currentSet = append(currentSet, paths[j])
             }
         }
         
-        // Update maxSet if we found a larger set
         if len(currentSet) > len(maxSet) {
             maxSet = make([][]string, len(currentSet))
             copy(maxSet, currentSet)
