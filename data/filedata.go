@@ -21,7 +21,7 @@ func GetFileData(file []byte , farm *AntFarm) {
 	fileData := strings.Split(string(file), "\n")
 	ants, err := strconv.Atoi(fileData[0])
 	utils.CheckError(err)
-	
+	// exclude number of ants
 	if !utils.CheckStartAndEnd(fileData[1:]) {
 		log.Fatal("ERROR: invalid file format, missing ##start and ##end in file")
 	}
@@ -33,7 +33,7 @@ func GetFileData(file []byte , farm *AntFarm) {
 			continue
 		}
 		if line == "##start" {
-			start = count 
+			start = count //index of the start room
 		}
 		
 		if line[0] == '#' && line != "##end" {
@@ -41,10 +41,10 @@ func GetFileData(file []byte , farm *AntFarm) {
 		}
 
 		if line == "##end" {
-			end = count 
+			end = count // index of the end room
 			for i < len(fileData) {
 				if strings.Contains(string(fileData[i]), "-") {
-					initial = i
+					initial = i //track to where the tunnels start
 					break loop
 				}
 				if string(fileData[i][0]) != "#" {
@@ -69,7 +69,7 @@ func GetFileData(file []byte , farm *AntFarm) {
 
 
 	farm.Ants = ants
-	farm.Farm = fileData
+	farm.Filedata = fileData
 	farm.Start = start
 	farm.End = end
 	farm.Rooms = rooms

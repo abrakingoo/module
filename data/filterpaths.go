@@ -3,7 +3,7 @@ package data
 
 func FilterPath(paths [][] string, farm *AntFarm) [][]string{
 	var usedPaths [][]string 
-	
+	// exlude the start room
 	for i:= 0 ; i< len(paths);i++ {
 		paths[i] = paths[i][1:]
 	}
@@ -11,7 +11,7 @@ func FilterPath(paths [][] string, farm *AntFarm) [][]string{
 	copy_path := make([][]string , len(paths))
 	_= copy(copy_path,paths)
 	
-
+	// place 'ants' on the rooms based on the size of the path
 	track := farm.Ants
 	for track > 0 {
 		min := len(copy_path[0])
@@ -33,6 +33,7 @@ func FilterPath(paths [][] string, farm *AntFarm) [][]string{
 		}
 	}
 
+	//calculate the turns 
 	var max = 0
 	for i:= 0; i < len(usedPaths);i++ {
 		if len(usedPaths[i]) > max {
@@ -42,6 +43,7 @@ func FilterPath(paths [][] string, farm *AntFarm) [][]string{
 
 	farm.Turns = max - 1
 	
+	// remove the 'ants' from the useable paths
 	for i:= 0; i < len(usedPaths); i++ {
 		for j:= 0; j < len(usedPaths[i]); j++ {
 			if usedPaths[i][j] == "ant" {
