@@ -124,7 +124,7 @@ loop:
 	paths := graph.BFS(rooms[start], rooms[end])
 
 	// Simulate ant movement and print
-	numAnts, err := strconv.Atoi(string(fileName[0]))
+	numAnts, err := strconv.Atoi(strings.TrimSpace(string(ants)))
 	if err != nil {
 		fmt.Println("Ant must be an integer")
 		return
@@ -148,29 +148,110 @@ func (g *Graph) AddEdges(from, to string) {
 
 // BFS function for finding shortest path
 func (g *Graph) BFS(start, end string) [][]string {
-	return [][]string{{"1", "3"}, {"1", "4", "3"}, {"1", "0", "6", "5"}}
+	var paths [][]string
+
+	// A queue to keep track of the paths to explore
+	queue := [][]string{{start}}
+	visited := map[string]bool{start: true}
+
+	for len(queue) > 0 {
+		// Dequeue the first path from the queue
+		path := queue[0]
+		queue = queue[1:]
+
+		// Get the last node in the current path
+		node := path[len(path)-1]
+
+		// If the last node is the end node, save the path
+		if node == end {
+			paths = append(paths, path)
+			continue
+		}
+
+		// Explore the neighbors of the current node
+		for _, neighbor := range g.adj[node] {
+			// Avoid cycles by ensuring the neighbor is not already in the path
+			if !visited[neighbor] {
+				newPath := append([]string{}, path...)
+				newPath = append(newPath, neighbor)
+				queue = append(queue, newPath)
+				visited[neighbor] = true
+			}
+		}
+	}
+
+	return paths
+}
+
+func contains(slice []string, value string) bool {
+	for _, v := range slice {
+		if v == value {
+			return true
+		}
+	}
+	return false
 }
 
 // SimulateAnts moves ants along paths and prints their progress
 func SimulateAnts(paths [][]string, numAnts int) {
-	antPositions := make([]int, numAnts)
-	done := false
+    if len(paths) == 0 {
+        fmt.Println("Error: No valid paths available.")
+        return
+    }
 
-	for !done {
-		done = true
-		var moves []string
+    // Each ant is assigned a path
+    antPaths := make([][]string, numAnts)
+    for i := 0; i < numAnts; i++ {
+        antPaths[i] = paths[i%len(paths)]
+    }
 
-		for ant := 0; ant < numAnts; ant++ {
-			if antPositions[ant] < len(paths[ant]) {
-				room := paths[ant][antPositions[ant]]
-				moves = append(moves, fmt.Sprintf("L%d-%s", ant+1, room))
-				antPositions[ant]++
-				done = false
-			}
-		}
+    // Initialize positions for each ant (-1 means not started)
+    antPositions := make([]int, numAnts)
+    for i := range antPositions {
+        antPositions[i] = -1
+    }
 
-		if len(moves) > 0 {
-			fmt.Println(strings.Join(moves, " "))
-		}
-	}
+    // Track active rooms
+    roomOccupancy := make(map[string]bool)
+
+    finishedAnts := 0
+
+    // Simulate the movement
+    for finishedAnts < numAnts {
+        var moves []string
+
+        for ant := 0; ant < numAnts; ant++ {
+            if antPositions[ant] == len(antPaths[ant])-1 { // Ant has finished its path
+                continue
+            }
+
+            nextPosition := antPositions[ant] + 1
+            nextRoom := antPaths[ant][nextPosition]
+
+            // Check if the next room is available
+            if !roomOccupancy[nextRoom] {
+                // Move the ant to the next room
+                if antPositions[ant] >= 0 { // Free the current room
+                    currentRoom := antPaths[ant][antPositions[ant]]
+                    delete(roomOccupancy, currentRoom)
+                }
+
+                moves = append(moves, fmt.Sprintf("L%d-%s", ant+1, nextRoom))
+                roomOccupancy[nextRoom] = true
+                antPositions[ant]++
+
+                // Check if this ant has now finished
+                if antPositions[ant] == len(antPaths[ant])-1 {
+                    finishedAnts++
+                }
+            }
+        }
+
+        // Print the moves for this step
+        if len(moves) > 0 {
+            fmt.Println(strings.Join(moves, " "))
+        }
+    }
 }
+
+
