@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"lemin/data"
 	"lemin/utils"
+	"log"
 	"os"
 	"strings"
 )
@@ -38,6 +39,9 @@ func main() {
 	}
 
 	paths := graph.BFS(farm.Rooms[farm.Start], farm.Rooms[farm.End])
+	if len(paths) == 0 {
+		log.Fatal("ERROR: no valid paths present in the file provided")
+	}
 	usedPaths := data.FilterPath(paths, farm)
 	data.PrintResult(usedPaths, farm)
 
