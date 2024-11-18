@@ -1,8 +1,9 @@
 package data
 
-import(
+import (
 	"lemin/utils"
 )
+
 // Graph structure with Nodes
 type Graph struct {
 	Node map[string][]string
@@ -19,7 +20,6 @@ func NewGraph() *Graph {
 	return &Graph{Node: map[string][]string{}}
 }
 
-
 func (g *Graph) BFS(start, end string) [][]string {
 	allPaths := [][]string{}
 	qeue := [][]string{{start}}
@@ -28,7 +28,7 @@ func (g *Graph) BFS(start, end string) [][]string {
 		path := qeue[0]
 		qeue = qeue[1:]
 		node := path[len(path)-1]
-	
+
 		if node == end {
 			allPaths = append(allPaths, path)
 		} else {
@@ -46,30 +46,28 @@ func (g *Graph) BFS(start, end string) [][]string {
 	return findMaxCompatiblePaths(allPaths)
 }
 
-
-
 func findMaxCompatiblePaths(paths [][]string) [][]string {
-    maxSet := [][]string{}
-    
-    // Try each path as a starting point
-    for i := 0; i < len(paths); i++ {
-        currentSet := [][]string{paths[i]}
-        
-        for j := 0; j < len(paths); j++ {
-            if i == j {
-                continue
-            }
-            
-            if utils.IsUnique(paths[j], currentSet) {
-                currentSet = append(currentSet, paths[j])
-            }
-        }
-        
-        if len(currentSet) > len(maxSet) {
-            maxSet = make([][]string, len(currentSet))
-            copy(maxSet, currentSet)
-        }
-    }
-    
-    return maxSet
+	maxSet := [][]string{}
+
+	// Try each path as a starting point
+	for i := 0; i < len(paths); i++ {
+		currentSet := [][]string{paths[i]}
+
+		for j := 0; j < len(paths); j++ {
+			if i == j {
+				continue
+			}
+
+			if utils.IsUnique(paths[j], currentSet) {
+				currentSet = append(currentSet, paths[j])
+			}
+		}
+
+		if len(currentSet) > len(maxSet) {
+			maxSet = make([][]string, len(currentSet))
+			copy(maxSet, currentSet)
+		}
+	}
+
+	return maxSet
 }
