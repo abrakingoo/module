@@ -8,7 +8,6 @@ import (
 	"strings"
 )
 
-
 func main() {
 	// Check if a file name was provided as an argument
 	if len(os.Args) != 2 {
@@ -38,9 +37,8 @@ func main() {
 		}
 	}
 
-	paths := graph.BFS(farm.Rooms[farm.Start],farm.Rooms[farm.End])
-	usedPaths := data.FilterPath(paths, farm) 
+	paths := graph.BFS(farm.Rooms[farm.Start], farm.Rooms[farm.End])
+	usedPaths := data.FilterPath(paths, farm)
 	data.PrintResult(usedPaths, farm)
-		
-	
+
 }
