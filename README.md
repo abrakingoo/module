@@ -132,7 +132,8 @@ Error messages are descriptive and specific to the issue encountered.
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## Acknowledgments
-
-- Project inspired by ant colony optimization algorithms
-- Thanks to all contributors and testers
+## Team
+Abu
+Jemo
+Njugush
+Manu
