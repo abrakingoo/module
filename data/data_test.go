@@ -144,3 +144,110 @@ func TestAntFarmFunctionality(t *testing.T) {
 		t.Errorf("len(Farm.Paths) = %v, want 2", len(farm.Paths))
 	}
 }
+
+func TestGetFileData(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    string
+		wantAnts int
+		wantRooms int
+		wantTunnels int
+	}{
+		{
+			name: "Basic valid input",
+			input: `5
+##start
+room0 0 0
+##end
+room1 1 1
+room2 2 2
+room0-room1
+room1-room2`,
+			wantAnts: 5,
+			wantRooms: 3,
+			wantTunnels: 2,
+		},
+		{
+			name: "Input with comments",
+			input: `10
+#comment here
+##start
+room0 0 0
+##end
+room1 1 1
+#comment
+room2 2 2
+room0-room1
+#tunnel comment
+room1-room2`,
+			wantAnts: 10,
+			wantRooms: 3,
+			wantTunnels: 2,
+		},
+		{
+			name: "Multiple tunnels",
+			input: `3
+##start
+room0 0 0
+##end
+room1 1 1
+room2 2 2
+room3 3 3
+room0-room1
+room1-room2
+room2-room3
+room3-room1`,
+			wantAnts: 3,
+			wantRooms: 4,
+			wantTunnels: 4,
+		},
+		{
+			name: "Complex room names",
+			input: `7
+##start
+start_room 0 0
+##end
+end_room 1 1
+middle_room 2 2
+another_room 3 3
+start_room-middle_room
+middle_room-end_room
+another_room-end_room`,
+			wantAnts: 7,
+			wantRooms: 4,
+			wantTunnels: 3,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			farm := NewFarm()
+			GetFileData([]byte(tt.input), farm)
+
+			if farm.Ants != tt.wantAnts {
+				t.Errorf("GetFileData() got Ants = %v, want %v", farm.Ants, tt.wantAnts)
+			}
+			if len(farm.Rooms) != tt.wantRooms {
+				t.Errorf("GetFileData() got %v rooms, want %v", len(farm.Rooms), tt.wantRooms)
+			}
+			if len(farm.Tunnels) != tt.wantTunnels {
+				t.Errorf("GetFileData() got %v tunnels, want %v", len(farm.Tunnels), tt.wantTunnels)
+			}
+			// Check if Start and End are set
+			if farm.Start < 0 || farm.Start >= len(farm.Rooms) {
+				t.Error("GetFileData() start room index out of bounds")
+			}
+			if farm.End < 0 || farm.End >= len(farm.Rooms) {
+				t.Error("GetFileData() end room index out of bounds")
+			}
+			// Check if filedata is properly set
+			if len(farm.Filedata) == 0 {
+				t.Error("GetFileData() filedata not set properly")
+			}
+			// Verify that start and end are different
+			if farm.Start == farm.End {
+				t.Error("GetFileData() start and end rooms should be different")
+			}
+		})
+	}
+}
