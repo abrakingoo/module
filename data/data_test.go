@@ -251,3 +251,119 @@ another_room-end_room`,
 		})
 	}
 }
+
+// TestNewGraph verifies that NewGraph creates a graph with initialized map
+func TestNewGraph(t *testing.T) {
+	g := NewGraph()
+	
+	if g == nil {
+		t.Fatal("NewGraph() returned nil")
+	}
+	
+	if g.Node == nil {
+		t.Error("NewGraph().Node map not initialized")
+	}
+	
+	if len(g.Node) != 0 {
+		t.Errorf("NewGraph().Node should be empty, got %d items", len(g.Node))
+	}
+}
+
+// TestGraphAddEdges verifies that edges are added correctly in both directions
+func TestGraphAddEdges(t *testing.T) {
+	g := NewGraph()
+	
+	// Test adding a single edge
+	g.AddEdges("A", "B")
+	
+	// Check if edge A->B exists
+	if len(g.Node["A"]) != 1 || g.Node["A"][0] != "B" {
+		t.Error("Edge A->B not added correctly")
+	}
+	
+	// Check if edge B->A exists (bidirectional)
+	if len(g.Node["B"]) != 1 || g.Node["B"][0] != "A" {
+		t.Error("Edge B->A not added correctly")
+	}
+	
+	// Test adding multiple edges to same node
+	g.AddEdges("A", "C")
+	
+	if len(g.Node["A"]) != 2 {
+		t.Error("Second edge from A not added correctly")
+	}
+	
+	// Verify all connections
+	expectedA := []string{"B", "C"}
+	for i, v := range expectedA {
+		if g.Node["A"][i] != v {
+			t.Errorf("Node A connections incorrect at index %d, got %s want %s", i, g.Node["A"][i], v)
+		}
+	}
+}
+
+// TestGraphBFS verifies breadth-first search path finding
+func TestGraphBFS(t *testing.T) {
+	tests := []struct {
+		name          string
+		edges         [][2]string
+		start         string
+		end           string
+		wantPathCount int
+	}{
+		{
+			name: "Simple path",
+			edges: [][2]string{
+				{"start", "A"},
+				{"A", "end"},
+			},
+			start:         "start",
+			end:           "end",
+			wantPathCount: 1,
+		},
+		{
+			name: "Multiple paths",
+			edges: [][2]string{
+				{"start", "A"},
+				{"A", "B"},
+				{"B", "end"},
+				{"start", "C"},
+				{"C", "end"},
+			},
+			start:         "start",
+			end:           "end",
+			wantPathCount: 2,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			g := NewGraph()
+			
+			// Build graph
+			for _, edge := range tt.edges {
+				g.AddEdges(edge[0], edge[1])
+			}
+			
+			paths := g.BFS(tt.start, tt.end)
+			
+			if len(paths) != tt.wantPathCount {
+				t.Errorf("BFS() found %d paths, want %d", len(paths), tt.wantPathCount)
+			}
+			
+			// Verify each path starts and ends correctly
+			for i, path := range paths {
+				if len(path) < 2 {
+					t.Errorf("Path %d is too short: %v", i, path)
+					continue
+				}
+				if path[0] != tt.start {
+					t.Errorf("Path %d doesn't start with %s: %v", i, tt.start, path)
+				}
+				if path[len(path)-1] != tt.end {
+					t.Errorf("Path %d doesn't end with %s: %v", i, tt.end, path)
+				}
+			}
+		})
+	}
+}
