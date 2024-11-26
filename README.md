@@ -12,7 +12,6 @@ Lem-in is a program that simulates ants navigating through an ant colony to find
 - Handles multiple valid paths
 - Input validation and error handling
 - Optimized for minimal moves
-- Detailed movement visualization
 
 ## Requirements
 
