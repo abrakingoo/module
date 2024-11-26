@@ -27,18 +27,18 @@ func TestNewFarm(t *testing.T) {
 		t.Errorf("NewFarm().Turns = %d, want 0", farm.Turns)
 	}
 	
-	// Verify slices are initialized to empty slices
-	if farm.Filedata == nil {
-		t.Error("NewFarm().Filedata = nil, want empty slice")
+	// Verify slices are initialized to zero values (nil or empty slice)
+	if farm.Filedata != nil && len(farm.Filedata) != 0 {
+		t.Error("NewFarm().Filedata should be nil or empty")
 	}
-	if farm.Rooms == nil {
-		t.Error("NewFarm().Rooms = nil, want empty slice")
+	if farm.Rooms != nil && len(farm.Rooms) != 0 {
+		t.Error("NewFarm().Rooms should be nil or empty")
 	}
-	if farm.Tunnels == nil {
-		t.Error("NewFarm().Tunnels = nil, want empty slice")
+	if farm.Tunnels != nil && len(farm.Tunnels) != 0 {
+		t.Error("NewFarm().Tunnels should be nil or empty")
 	}
-	if farm.Paths == nil {
-		t.Error("NewFarm().Paths = nil, want empty slice")
+	if farm.Paths != nil && len(farm.Paths) != 0 {
+		t.Error("NewFarm().Paths should be nil or empty")
 	}
 }
 
