@@ -7,9 +7,8 @@ import (
 
 func CheckValidFormat(farm *AntFarm) bool {
 	//check if start rooms and end rooms are the same
-	startRoom := strings.Split(farm.Rooms[farm.Start], " ")[0]
-	endroom := strings.Split(farm.Rooms[farm.End], " ")[0]
-	if startRoom == endroom {
+	
+	if farm.Start == farm.End {
 		return false
 	}
 

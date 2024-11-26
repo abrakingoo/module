@@ -44,10 +44,7 @@ func main() {
 		}
 	}
 
-	startRoom := strings.Split(farm.Rooms[farm.Start], " ")[0]
-	endroom := strings.Split(farm.Rooms[farm.End], " ")[0]
-
-	paths := graph.BFS(startRoom, endroom)
+	paths := graph.BFS(farm.Start, farm.End)
 	if len(paths) == 0 {
 		log.Fatal("ERROR: no valid paths present in the file provided")
 	}

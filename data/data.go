@@ -2,8 +2,8 @@ package data
 
 type AntFarm struct {
 	Ants     int      //number of ants in the file
-	Start    int      //the start room
-	End      int      // the end room
+	Start    string      //the start room
+	End      string   // the end room
 	Turns    int      // number of turns
 	Filedata []string //the whole filedata
 	Rooms    []string
