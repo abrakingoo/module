@@ -7,27 +7,24 @@ func FilterPath(paths [][]string, farm *AntFarm) [][]string {
 		paths[i] = paths[i][1:]
 	}
 
-	copy_path := make([][]string, len(paths))
-	_ = copy(copy_path, paths)
-
 	// place 'ants' on the rooms based on the size of the path
 	track := farm.Ants
 	for track > 0 {
-		min := len(copy_path[0])
+		min := len(paths[0])
 		index := 0
-		for i := 1; i < len(copy_path); i++ {
-			if len(copy_path[i]) < min {
+		for i := 1; i < len(paths); i++ {
+			if len(paths[i]) < min {
 				index = i
 			}
 		}
-		copy_path[index] = append(copy_path[index], "ant")
+		paths[index] = append(paths[index], "ant")
 		track--
 	}
 
 	//useable paths for the ants
-	for i := 0; i < len(copy_path); i++ {
-		if copy_path[i][len(copy_path[i])-1] == "ant" {
-			usedPaths = append(usedPaths, copy_path[i])
+	for i := 0; i < len(paths); i++ {
+		if paths[i][len(paths[i])-1] == "ant" {
+			usedPaths = append(usedPaths, paths[i])
 		}
 	}
 
