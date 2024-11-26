@@ -29,6 +29,9 @@ func main() {
 	farm := data.NewFarm()
 
 	data.GetFileData(file, farm)
+	if !data.CheckValidFormat(farm) {
+		log.Fatal("Error: invalid file format")
+	}
 
 	graph := data.NewGraph()
 	for _, connection := range farm.Tunnels {
@@ -38,7 +41,10 @@ func main() {
 		}
 	}
 
-	paths := graph.BFS(farm.Rooms[farm.Start], farm.Rooms[farm.End])
+	startRoom := strings.Split(farm.Rooms[farm.Start], " ")[0]
+	endroom := strings.Split(farm.Rooms[farm.End], " ")[0]
+
+	paths := graph.BFS(startRoom, endroom)
 	if len(paths) == 0 {
 		log.Fatal("ERROR: no valid paths present in the file provided")
 	}
