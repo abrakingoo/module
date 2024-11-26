@@ -19,6 +19,10 @@ func CheckValidFormat(farm *AntFarm) bool {
 		if strings.ToLower(string(data[0][0])) == "l" {
 			return false
 		}
+		// check if there more than two co-ordinates
+		if len(data) != 3 { 
+			return false
+		}
 		for j:= 1; j < len(data); j++ {
 			if _, err := strconv.Atoi(data[j]); err != nil {
 				return false
@@ -43,13 +47,15 @@ func CheckValidFormat(farm *AntFarm) bool {
 	 //check for tunnels if the start with an l
 	for i:= 0; i < len(farm.Tunnels); i++ {
 		data := strings.Split(farm.Tunnels[i], "-")
+		//check if the tunnel format is wrong, like extra tunnels
+		 if len(data) != 2 {
+		 	return false
+		 }
 		for j :=0 ; j < len(data); j++ {
 			if strings.ToLower(string(data[j][0])) == "#" || strings.ToLower(string(data[j][0])) == "l" {
 				return false
 			} 
 		}
 	}
-
-	
 	return true
 }
