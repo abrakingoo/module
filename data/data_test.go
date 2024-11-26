@@ -17,46 +17,28 @@ func TestNewFarm(t *testing.T) {
 	if farm.Ants != 0 {
 		t.Errorf("NewFarm().Ants = %d, want 0", farm.Ants)
 	}
-	if farm.Start != 0 {
-		t.Errorf("NewFarm().Start = %d, want 0", farm.Start)
+	if farm.Start != "" {
+		t.Errorf("NewFarm().Start = %s, want 0", farm.Start)
 	}
-	if farm.End != 0 {
-		t.Errorf("NewFarm().End = %d, want 0", farm.End)
+	if farm.End != "" {
+		t.Errorf("NewFarm().End = %s, want 0", farm.End)
 	}
 	if farm.Turns != 0 {
 		t.Errorf("NewFarm().Turns = %d, want 0", farm.Turns)
 	}
 	
 	// Verify slices are initialized to zero values (nil or empty slice)
-	if farm.Filedata != nil && len(farm.Filedata) != 0 {
+	if len(farm.Filedata) != 0 {
 		t.Error("NewFarm().Filedata should be nil or empty")
 	}
-	if farm.Rooms != nil && len(farm.Rooms) != 0 {
+	if len(farm.Rooms) != 0 {
 		t.Error("NewFarm().Rooms should be nil or empty")
 	}
-	if farm.Tunnels != nil && len(farm.Tunnels) != 0 {
+	if len(farm.Tunnels) != 0 {
 		t.Error("NewFarm().Tunnels should be nil or empty")
 	}
-	if farm.Paths != nil && len(farm.Paths) != 0 {
+	if len(farm.Paths) != 0 {
 		t.Error("NewFarm().Paths should be nil or empty")
-	}
-}
-
-func TestNewFarmBasic(t *testing.T) {
-	farm := NewFarm()
-	if farm == nil {
-		t.Error("Expected NewFarm() to return a non-nil pointer to AntFarm")
-	}
-	
-	// Test initial values
-	if farm.Ants != 0 {
-		t.Errorf("Expected initial Ants to be 0, got %d", farm.Ants)
-	}
-	if farm.Start != 0 {
-		t.Errorf("Expected initial Start to be 0, got %d", farm.Start)
-	}
-	if farm.End != 0 {
-		t.Errorf("Expected initial End to be 0, got %d", farm.End)
 	}
 }
 
@@ -111,8 +93,8 @@ func TestAntFarmFunctionality(t *testing.T) {
 	
 	// Test setting values
 	farm.Ants = 10
-	farm.Start = 1
-	farm.End = 2
+	farm.Start = "1"
+	farm.End = "2"
 	farm.Turns = 5
 	farm.Filedata = []string{"test1", "test2"}
 	farm.Rooms = []string{"room1", "room2"}
@@ -122,10 +104,10 @@ func TestAntFarmFunctionality(t *testing.T) {
 	if farm.Ants != 10 {
 		t.Errorf("Farm.Ants = %v, want 10", farm.Ants)
 	}
-	if farm.Start != 1 {
+	if farm.Start != "1" {
 		t.Errorf("Farm.Start = %v, want 1", farm.Start)
 	}
-	if farm.End != 2 {
+	if farm.End != "2" {
 		t.Errorf("Farm.End = %v, want 2", farm.End)
 	}
 	if farm.Turns != 5 {
@@ -152,6 +134,8 @@ func TestGetFileData(t *testing.T) {
 		wantAnts int
 		wantRooms int
 		wantTunnels int
+		wantStart string
+		wantEnd string
 	}{
 		{
 			name: "Basic valid input",
@@ -166,6 +150,8 @@ room1-room2`,
 			wantAnts: 5,
 			wantRooms: 3,
 			wantTunnels: 2,
+			wantStart: "room0",
+			wantEnd: "room1",
 		},
 		{
 			name: "Input with comments",
@@ -183,6 +169,8 @@ room1-room2`,
 			wantAnts: 10,
 			wantRooms: 3,
 			wantTunnels: 2,
+			wantStart: "room0",
+			wantEnd:"room1",
 		},
 		{
 			name: "Multiple tunnels",
@@ -200,6 +188,8 @@ room3-room1`,
 			wantAnts: 3,
 			wantRooms: 4,
 			wantTunnels: 4,
+			wantStart: "room0",
+			wantEnd: "room1",
 		},
 		{
 			name: "Complex room names",
@@ -216,6 +206,8 @@ another_room-end_room`,
 			wantAnts: 7,
 			wantRooms: 4,
 			wantTunnels: 3,
+			wantStart: "start_room",
+			wantEnd: "end_room",
 		},
 	}
 
@@ -233,14 +225,15 @@ another_room-end_room`,
 			if len(farm.Tunnels) != tt.wantTunnels {
 				t.Errorf("GetFileData() got %v tunnels, want %v", len(farm.Tunnels), tt.wantTunnels)
 			}
-			// Check if Start and End are set
-			if farm.Start < 0 || farm.Start >= len(farm.Rooms) {
-				t.Error("GetFileData() start room index out of bounds")
+			
+			if farm.Start != tt.wantStart {
+				t.Errorf("check for file start, got %v , want %v ", farm.Start, tt.wantStart)
 			}
-			if farm.End < 0 || farm.End >= len(farm.Rooms) {
-				t.Error("GetFileData() end room index out of bounds")
+
+			if farm.End != tt.wantEnd {
+				t.Errorf("check for file start, got %v , want %v ", farm.End, tt.wantEnd)
 			}
-			// Check if filedata is properly set
+			// // Check if filedata is properly set
 			if len(farm.Filedata) == 0 {
 				t.Error("GetFileData() filedata not set properly")
 			}
