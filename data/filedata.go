@@ -52,14 +52,12 @@ loop:
 					break loop
 				}
 				if string(fileData[i][0]) != "#" {
-					r := strings.Split(fileData[i], " ")
-					rooms = append(rooms, r[0])
+					rooms = append(rooms, fileData[i])
 				}
 				i++
 			}
 		}
-		r := strings.Split(line, " ")
-		rooms = append(rooms, r[0]) // Add the room name
+		rooms = append(rooms, line) // Add the room name
 		count++
 	}
 
