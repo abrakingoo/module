@@ -30,7 +30,7 @@ func main() {
 
 	data.GetFileData(file, farm)
 	if !data.CheckValidFormat(farm) {
-		log.Fatal("Error: invalid file format")
+		log.Fatal("Error: invalid file format, missing or wrong values")
 	}
 
 	graph := data.NewGraph()
