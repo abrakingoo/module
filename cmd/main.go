@@ -34,6 +34,9 @@ func main() {
 	}
 
 	graph := data.NewGraph()
+	if len(farm.Tunnels) == 0 {
+		log.Fatal("ERROR: no valid tunnels, check file format")
+	}
 	for _, connection := range farm.Tunnels {
 		if strings.Contains(connection, "-") {
 			rooms := strings.Split(connection, "-")

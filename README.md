@@ -132,7 +132,7 @@ Error messages are descriptive and specific to the issue encountered.
 This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Team
-Abu
-Jemo
-Njugush
-Manu
+Abraham Kingoo | abu
+James Muchiri
+Wilfred Njuguna
+Emmanuel Barsulai
