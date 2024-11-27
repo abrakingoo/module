@@ -14,7 +14,7 @@ func CheckValidFormat(farm *AntFarm) bool {
 
 	//check if co-ordinates are integers
 	for i:= 0; i < len(farm.Rooms); i++ {
-		data := strings.Split(farm.Rooms[i], " ")
+		data := strings.Split(strings.TrimSpace(farm.Rooms[i]), " ")
 		//check if rooms start with an l
 		if strings.ToLower(string(data[0][0])) == "l" {
 			return false
